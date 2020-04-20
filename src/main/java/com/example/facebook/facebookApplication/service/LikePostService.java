@@ -15,13 +15,21 @@ public class LikePostService {
 
     public GenericResponse addLike(String userId, String postId){
         try {
-            if(!(aerospikeRepository.isKeyExists(userId) && aerospikeRepository.isKeyExists(postId))) {
+//            if(!(aerospikeRepository.isKeyExists(userId) && aerospikeRepository.isKeyExists(postId))) {
+//                return GenericResponse.builder()
+//                        .code("401")
+//                        .message("UserId/postId does not exist")
+//                        .build();
+//            }
+
+            if(aerospikeRepository.isValueExists("postId", userId, postId)) {
+                // delete from this
+                aerospikeRepository.deleteDataFromList("postId", userId, postId);
+                aerospikeRepository.deleteDataFromList("userId", postId, userId);
                 return GenericResponse.builder()
-                        .code("401")
-                        .message("UserId/postId does not exist")
+                        .message("Unliked Post")
                         .build();
             }
-            if(aerospikeRepository.isDataAddedToList(userId,postId))
 
             aerospikeRepository.addDataToList("userId", postId, userId);
             aerospikeRepository.addDataToList("postId", userId, postId);

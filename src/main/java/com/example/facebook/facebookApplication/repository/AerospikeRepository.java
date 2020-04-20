@@ -8,7 +8,10 @@ import com.aerospike.client.cdt.ListOperation;
 import com.aerospike.client.policy.RecordExistsAction;
 import com.aerospike.client.policy.WritePolicy;
 
+import java.sql.Struct;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 public class AerospikeRepository {
 
@@ -42,7 +45,6 @@ public class AerospikeRepository {
                 //ListOperation.getByIndex(binName, 0, 7)
                // ListOperation.getByIndexRange(binName, 0, 10, 7)
         );
-        System.out.println(record);
     }
 
     public boolean isKeyExists(String key) {
@@ -65,11 +67,33 @@ public class AerospikeRepository {
         ).bins;
     }
 
-//    public boolean isDataAddedToList(String userId, String postId) {
-//        client.operate(
-//                writePolicy,
-//                new Key(NAMESPACE,SET_NAME,userId),
-//                ListOperation.getByValue()
-//        )
-//    }
+
+    public boolean isValueExists(String binName, String key, String value) {
+
+        Record record = client.operate(
+                writePolicy,
+                new Key(NAMESPACE, SET_NAME, key),
+                ListOperation.getByValue(binName, Value.get(value), 7)
+        );
+
+        if(Objects.isNull(record)) {
+            return false;
+        }
+
+        ArrayList<String> result = (ArrayList<String>) record.bins.get(binName);
+
+        if(result.size() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void deleteDataFromList(String binName, String key, String value) {
+        client.operate(
+                writePolicy,
+                new Key(NAMESPACE, SET_NAME,key),
+                ListOperation.removeByValue(binName, Value.get(value), 7)
+        );
+
+    }
 }

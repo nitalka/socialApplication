@@ -32,6 +32,10 @@ public class UserResource {
         return userService.findAll();
     }
 
+
+
+
+
     @RequestMapping(value="/", method = RequestMethod.POST)
     @ApiOperation("add a new user")
     public UserResponse persist(@RequestBody final UserRequest userRequest){

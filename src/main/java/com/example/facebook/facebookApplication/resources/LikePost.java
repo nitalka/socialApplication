@@ -20,11 +20,7 @@ public class LikePost {
 
     @RequestMapping(value="/likes/{userId}/{postId}",method=RequestMethod.POST)
     public GenericResponse likePost(@PathVariable final String userId,@PathVariable final String postId) {
-       likePostService.addLike(userId,postId);
-       return GenericResponse.builder()
-               .code("aa")
-               .message("SUCESS")
-               .build();
+       return likePostService.addLike(userId,postId);
     }
 
     @RequestMapping(value="/likes/post/{postId}",method = RequestMethod.GET)

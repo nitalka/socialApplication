@@ -5,6 +5,7 @@ import com.aerospike.client.Key;
 import com.aerospike.client.Record;
 import com.aerospike.client.Value;
 import com.aerospike.client.cdt.ListOperation;
+import com.aerospike.client.policy.RecordExistsAction;
 import com.aerospike.client.policy.WritePolicy;
 
 import java.util.Map;
@@ -44,6 +45,10 @@ public class AerospikeRepository {
         System.out.println(record);
     }
 
+    public boolean isKeyExists(String key) {
+        return client.exists(writePolicy, new Key(NAMESPACE, SET_NAME, key));
+    }
+
     public Map<String, Object> getAllLikesPost(String binName, String postId) {
         return client.operate(
                 writePolicy,
@@ -59,4 +64,12 @@ public class AerospikeRepository {
                 ListOperation.getByIndexRange(binName, 0, Integer.MAX_VALUE, 7)
         ).bins;
     }
+
+//    public boolean isDataAddedToList(String userId, String postId) {
+//        client.operate(
+//                writePolicy,
+//                new Key(NAMESPACE,SET_NAME,userId),
+//                ListOperation.getByValue()
+//        )
+//    }
 }

@@ -1,6 +1,7 @@
 package com.example.facebook.facebookApplication.service;
 
 import com.aerospike.client.AerospikeException;
+import com.example.facebook.facebookApplication.models.GenericResponse;
 import com.example.facebook.facebookApplication.repository.AerospikeRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +13,29 @@ public class LikePostService {
 
     public AerospikeRepository aerospikeRepository = AerospikeRepository.getAerospikeRepository();
 
-    public void addLike(String userId, String postId){
+    public GenericResponse addLike(String userId, String postId){
         try {
+            if(!(aerospikeRepository.isKeyExists(userId) && aerospikeRepository.isKeyExists(postId))) {
+                return GenericResponse.builder()
+                        .code("401")
+                        .message("UserId/postId does not exist")
+                        .build();
+            }
+            if(aerospikeRepository.isDataAddedToList(userId,postId))
+
             aerospikeRepository.addDataToList("userId", postId, userId);
             aerospikeRepository.addDataToList("postId", userId, postId);
+            return GenericResponse.builder()
+                    .code("200")
+                    .message("added likes")
+                    .build();
+
         } catch (AerospikeException e) {
             System.out.println(e.getMessage());
+            return GenericResponse.builder()
+                    .code("500")
+                    .message("Aerospike error occured..")
+                    .build();
         }
     }
 

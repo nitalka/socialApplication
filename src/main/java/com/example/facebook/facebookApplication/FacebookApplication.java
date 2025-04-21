@@ -12,7 +12,6 @@ public class FacebookApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FacebookApplication.class, args);
 
-
 	}
 
 }
